@@ -1,0 +1,13 @@
+spring.application.name: cloud-config-service
+
+server.port: 9311
+
+
+info:
+  app:
+    name: "${spring.application.name}"
+      #description: "Example Spring Cloud Config Server"
+      #version: "1.0.0"
+      #author: "Srikanth"
+    #docs: "http://skakumanu.dev"
+
