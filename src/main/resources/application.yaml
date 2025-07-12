@@ -1,7 +1,37 @@
-spring.application.name: cloud-config-service
+spring:
+  profiles.active: ${SPRING_ACTIVE_PROFILE:dev}
+  application:
+    name: ${SPRING_APP_NAME:cloud-config-service}
+#  cloud.config.server.git.uri: file://${user.home}/personal/config-repo
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/srikanthkakumanu/service-configs
+          username:
+          password:
+          default-label: master
+          clone-on-start: true
 
-server.port: 9311
 
+server:
+  port: 9311
+  servlet:
+    context-path: ${SERVLET_CONTEXT_PATH:/config}
+
+management:
+  health:
+    livenessstate.enable: true
+    readinessstate.enable: true
+  endpoint.health.probes.enabled: true
+
+# Eureka Service Discovery
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: "${EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE:http://eureka-discovery-service:9111/eureka}"
+  instance:
+    instance-id: "${spring.application.name}:${spring.application.instance_id:${random.value}}"
 
 info:
   app:
