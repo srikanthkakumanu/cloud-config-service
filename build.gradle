@@ -51,3 +51,12 @@ test {
 		showStandardStreams = false
 	}
 }
+
+// Supports faster build times
+buildCache {
+	local {
+		enabled = true
+		directory = new File(".", 'build-cache')
+		// Gradle will automatically clean up when cache exceeds default limits
+	}
+}
