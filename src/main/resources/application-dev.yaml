@@ -1,15 +1,109 @@
 spring:
   application:
-    name: cloud-config-service
+    name: ${SPRING_APP_NAME:cloud-config-service}
 
-server.port: 9311
+  config:
+    import:
+      - vault://secret/data/api/keys/dev
 
+  threads:
+    virtual:
+      enabled: true
+
+  cloud:
+    # Vault Configuration
+    vault:
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN:srikanth}
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: /
+      config:
+        retry:
+          enabled: true
+          max-attempts: 15
+          initial-interval: 2000 # 2 seconds
+    # API Gateway
+    gateway:
+      discovery:
+        locator:
+          enabled: true # Automatic Routing of API Gateway
+
+    # Spring Cloud Config Server settings
+    config: # <--- Add this 'config' block
+      server:
+#        git: # To point to a Git Repo
+#          uri: ${GITHUB_URL:https://github.com/srikanthkakumanu/service-configs.git}
+#          username: ${gh-user}
+#          password: ${gh-password}
+#          default-label: master
+#          clone-on-start: true
+#          # It's good practice to force a pull on every request in dev
+#          # to ensure you get the latest changes without restarting.
+#          force-pull: true
+#          skipSslValidation: true
+        native: # To Point to a local file system
+          search-locations: file://${FILE_SYSTEM_URL:/home/skakumanu/practice/micro-services/service-configs}
+      retry:
+        enabled: true
+        max-attempts: 20
+        initial-interval: 2000 # 2 seconds
+        max-interval: 10000
+        multiplier: 1.2
+      fail-fast: true
+
+server:
+  port: 9311
+  servlet:
+    context-path: ${SERVLET_CONTEXT_PATH:/config}
+
+# Actuator Config
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: health, info, beans, env, metrics, auditevents, httptrace, loggers, threaddump
+  info:
+    env:
+      enabled: true
+    build:
+      enabled: true
+    git:
+      enabled: true
+      mode: full
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+# Eureka Service Discovery
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE:http://eureka-discovery-service:9111/eureka}
+  instance:
+    instance-id: "${spring.application.name}:${spring.application.instance_id:${random.value}}"
 
 info:
   app:
-    name: "${spring.application.name}"
+    name: ${spring.application.name}
       #description: "Example Spring Cloud Config Server"
       #version: "1.0.0"
-      #author: "Srikanth"
+    #author: "Srikanth"
     #docs: "http://skakumanu.dev"
 

@@ -14,6 +14,11 @@ java {
 	}
 }
 
+// For Spring Boot Actuator to show build information
+springBoot {
+	buildInfo()
+}
+
 repositories {
 	mavenCentral()
 }
@@ -24,6 +29,8 @@ ext {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-vault-config'
 	implementation 'org.springframework.cloud:spring-cloud-config-server'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -52,11 +59,3 @@ test {
 	}
 }
 
-// Supports faster build times
-buildCache {
-	local {
-		enabled = true
-		directory = new File(".", 'build-cache')
-		// Gradle will automatically clean up when cache exceeds default limits
-	}
-}
