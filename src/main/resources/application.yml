@@ -1,13 +1,15 @@
+# Common to every environment. Where the configuration files come from is set per environment in
+# application-dev.yml, application-qa.yml and application-prod.yml; with no profile set, dev is used.
 spring:
   application:
     name: cloud-config-service
   profiles:
-    # Composite backend: files from service-configs, then secrets from Vault.
-    # Use the git profile instead of native to serve service-configs from its remote.
-    active: ${SPRING_PROFILES_ACTIVE:native-repo}
+    default: dev
+    # Every environment serves a composite of Vault and a file source.
     group:
-      native-repo: composite
-      git-repo: composite
+      dev: composite
+      qa: composite
+      prod: composite
   cloud:
     config:
       server:
@@ -19,12 +21,6 @@ spring:
 server:
   port: ${SERVER_PORT:9311}
 
-eureka:
-  client:
-    enabled: ${EUREKA_ENABLED:false}
-    service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:9111/eureka/}
-
 management:
   endpoints:
     web:
@@ -34,40 +30,3 @@ management:
     health:
       probes:
         enabled: true
-
----
-spring:
-  config:
-    activate:
-      on-profile: native-repo
-  cloud:
-    config:
-      server:
-        composite:
-          - type: vault
-            host: ${VAULT_HOST:localhost}
-            port: ${VAULT_PORT:8200}
-            scheme: http
-            backend: secret
-            kv-version: 2
-          - type: native
-            search-locations: ${CONFIG_REPO_LOCATION:file:../service-configs}
-
----
-spring:
-  config:
-    activate:
-      on-profile: git-repo
-  cloud:
-    config:
-      server:
-        composite:
-          - type: vault
-            host: ${VAULT_HOST:localhost}
-            port: ${VAULT_PORT:8200}
-            scheme: http
-            backend: secret
-            kv-version: 2
-          - type: git
-            uri: ${CONFIG_REPO_URI}
-            default-label: ${CONFIG_REPO_LABEL:master}

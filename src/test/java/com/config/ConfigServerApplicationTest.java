@@ -46,9 +46,9 @@ class ConfigServerApplicationTest {
 
 	@Test
 	void servesFileConfigurationWithProfileOverridingServiceOverridingShared() {
-		var properties = flattened(environment("/sample-service/docker", null));
+		var properties = flattened(environment("/sample-service/dev", null));
 
-		assertThat(properties).containsEntry("sample.greeting", "from-docker-profile")
+		assertThat(properties).containsEntry("sample.greeting", "from-dev-profile")
 				.containsEntry("sample.shared-only", true);
 	}
 

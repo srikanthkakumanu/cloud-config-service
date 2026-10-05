@@ -1,0 +1,21 @@
+# Development: configuration files are read straight from a directory, so an edit is served on
+# the next request.
+spring:
+  cloud:
+    config:
+      server:
+        composite:
+          - type: vault
+            host: ${VAULT_HOST:localhost}
+            port: ${VAULT_PORT:8200}
+            scheme: http
+            backend: secret
+            kv-version: 2
+          - type: native
+            search-locations: ${CONFIG_REPO_LOCATION:file:../service-configs}
+
+eureka:
+  client:
+    enabled: ${EUREKA_ENABLED:false}
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:9111/eureka/}

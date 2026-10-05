@@ -1,0 +1,22 @@
+# qa: configuration files are read from the service-configs Git repository, at the given branch
+# or tag. Every address must be supplied.
+spring:
+  cloud:
+    config:
+      server:
+        composite:
+          - type: vault
+            host: ${VAULT_HOST}
+            port: ${VAULT_PORT:8200}
+            scheme: ${VAULT_SCHEME:http}
+            backend: secret
+            kv-version: 2
+          - type: git
+            uri: ${CONFIG_REPO_URI}
+            default-label: ${CONFIG_REPO_LABEL}
+
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: ${EUREKA_URL}
