@@ -1,5 +1,6 @@
 # qa: configuration files are read from the service-configs Git repository, at the given branch
-# or tag. Every address must be supplied.
+# or tag. To run this profile locally without a Git remote, set CONFIG_REPO_TYPE=native and
+# CONFIG_REPO_LOCATION to a directory instead.
 spring:
   cloud:
     config:
@@ -11,9 +12,10 @@ spring:
             scheme: ${VAULT_SCHEME:http}
             backend: secret
             kv-version: 2
-          - type: git
-            uri: ${CONFIG_REPO_URI}
-            default-label: ${CONFIG_REPO_LABEL}
+          - type: ${CONFIG_REPO_TYPE:git}
+            uri: ${CONFIG_REPO_URI:}
+            default-label: ${CONFIG_REPO_LABEL:main}
+            search-locations: ${CONFIG_REPO_LOCATION:}
 
 eureka:
   client:
