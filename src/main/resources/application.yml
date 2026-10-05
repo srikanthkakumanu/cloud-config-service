@@ -3,6 +3,9 @@
 spring:
   application:
     name: cloud-config-service
+  lifecycle:
+    # How long in-flight requests get to finish; the container is given longer than this.
+    timeout-per-shutdown-phase: 30s
   profiles:
     default: dev
     # Every environment serves a composite of Vault and a file source.
@@ -20,6 +23,8 @@ spring:
 
 server:
   port: ${SERVER_PORT:9311}
+  # On stop, finish the requests in flight instead of dropping them.
+  shutdown: graceful
 
 management:
   endpoints:
