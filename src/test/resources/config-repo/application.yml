@@ -1,0 +1,3 @@
+sample:
+  greeting: shared
+  shared-only: yes

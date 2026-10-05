@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: cloud-config-service
+  profiles:
+    # Composite backend: files from service-configs, then secrets from Vault.
+    # Use the git profile instead of native to serve service-configs from its remote.
+    active: ${SPRING_PROFILES_ACTIVE:native-repo}
+    group:
+      native-repo: composite
+      git-repo: composite
+  cloud:
+    config:
+      server:
+        # A caller that sends no X-Config-Token still gets the file-based configuration.
+        fail-on-composite-error: false
+        health:
+          enabled: false
+
+server:
+  port: ${SERVER_PORT:9311}
+
+eureka:
+  client:
+    enabled: ${EUREKA_ENABLED:false}
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:9111/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: native-repo
+  cloud:
+    config:
+      server:
+        composite:
+          - type: vault
+            host: ${VAULT_HOST:localhost}
+            port: ${VAULT_PORT:8200}
+            scheme: http
+            backend: secret
+            kv-version: 2
+          - type: native
+            search-locations: ${CONFIG_REPO_LOCATION:file:../service-configs}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: git-repo
+  cloud:
+    config:
+      server:
+        composite:
+          - type: vault
+            host: ${VAULT_HOST:localhost}
+            port: ${VAULT_PORT:8200}
+            scheme: http
+            backend: secret
+            kv-version: 2
+          - type: git
+            uri: ${CONFIG_REPO_URI}
+            default-label: ${CONFIG_REPO_LABEL:master}

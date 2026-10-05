@@ -1,0 +1,53 @@
+plugins {
+	id 'java'
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.dependency.management)
+}
+
+group = 'com.config'
+version = '1.0.0'
+description = 'Spring Cloud Config Server backed by service-configs and Vault'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(libs.versions.java.get() as int)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencyManagement {
+	imports {
+		mavenBom libs.spring.cloud.dependencies.get().toString()
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.cloud:spring-cloud-config-server'
+	// The Vault backend of the config server is only available with Spring Vault on the classpath.
+	implementation 'org.springframework.vault:spring-vault-core'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-restclient'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+	testImplementation 'org.testcontainers:testcontainers-vault'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+bootJar {
+	archiveFileName = 'application.jar'
+}
+
+jar {
+	enabled = false
+}
+
+test {
+	useJUnitPlatform()
+}
