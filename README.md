@@ -72,7 +72,7 @@ Notes:
 
 This repository must sit next to [`micro-services`](../micro-services/README.md), which holds the version catalog, and next to `service-configs`.
 
-**With the whole platform** (the usual way): `cd ../micro-services && make up`. It starts in stage 4 of `scripts/start.sh`, after the bootstrap has seeded Vault and before the services, which cannot start without it. In Compose `service-configs` is mounted read-only at `/config-repo`.
+**With the whole platform** (the usual way): `cd ../micro-services && make up`. It starts in stage 5 of `scripts/start.sh`, after Vault has been seeded and Keycloak set up, and before the services, which cannot start without it. In Compose `service-configs` is mounted read-only at `/config-repo`.
 
 **On its own, from source:** `./gradlew bootRun`. It serves `../service-configs` directly.
 
@@ -84,13 +84,16 @@ This repository must sit next to [`micro-services`](../micro-services/README.md)
 ./gradlew build
 ```
 
-6 tests, none skipped. Needs Docker: they run against a real Vault container.
+18 tests, none skipped. Needs Docker: they run against a real Vault container. One class uses sample files; the other serves the real `../service-configs` and checks what each service (`user-service`, `auth-service`, `api-gateway`, `books-service`) receives in `dev`, `qa` and `prod`.
 
 - environment file overrides service file overrides shared file
 - the default profile gets the service file
 - a caller with a Vault token gets its secrets; a caller without one gets none
 - another service's secrets are never mixed in
 - readiness
+- every service has a file per environment and receives its own client ID and audience
+- books-service gets its database address and seed switch per environment
+- no credential is served from the configuration files
 
 ## Build and image
 
