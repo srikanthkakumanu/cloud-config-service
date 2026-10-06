@@ -46,7 +46,7 @@ class PlatformConfigurationTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "user-service", "auth-service", "api-gateway", "books-service" })
+	@ValueSource(strings = { "user-service", "auth-service", "api-gateway", "books-service", "video-service" })
 	void everyServiceHasAFileForEachEnvironmentAndTheSharedSettings(String service) {
 		for (String suffix : new String[] { "", "-dev", "-qa", "-prod" }) {
 			assertThat(Files.exists(REPOSITORY.resolve(service + suffix + ".yml"))).as("%s%s.yml exists", service, suffix)
@@ -62,7 +62,7 @@ class PlatformConfigurationTest {
 
 	/** The gateway keeps its client ID in its own bundled file; the services get theirs from here. */
 	@ParameterizedTest
-	@ValueSource(strings = { "user-service", "auth-service", "books-service" })
+	@ValueSource(strings = { "user-service", "auth-service", "books-service", "video-service" })
 	void everyServiceIsGivenItsOwnClientIdAndAudience(String service) {
 		for (String environment : new String[] { "dev", "qa", "prod" }) {
 			assertThat(configuration(service, environment)).as("%s in %s", service, environment)
@@ -91,7 +91,7 @@ class PlatformConfigurationTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "user-service", "auth-service", "api-gateway", "books-service" })
+	@ValueSource(strings = { "user-service", "auth-service", "api-gateway", "books-service", "video-service" })
 	void noCredentialIsServedFromTheConfigurationFiles(String service) {
 		for (String environment : new String[] { "dev", "qa", "prod" }) {
 			assertThat(configuration(service, environment).keySet()).as("%s in %s", service, environment)
