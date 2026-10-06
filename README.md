@@ -84,7 +84,7 @@ This repository must sit next to [`micro-services`](../micro-services/README.md)
 ./gradlew build
 ```
 
-18 tests, none skipped. Needs Docker: they run against a real Vault container. One class uses sample files; the other serves the real `../service-configs` and checks what each service (`user-service`, `auth-service`, `api-gateway`, `books-service`) receives in `dev`, `qa` and `prod`.
+21 tests, none skipped. Needs Docker: they run against a real Vault container. One class uses sample files; the other serves the real `../service-configs` and checks what each service (`user-service`, `auth-service`, `api-gateway`, `books-service`, `video-service`) receives in `dev`, `qa` and `prod`.
 
 - environment file overrides service file overrides shared file
 - the default profile gets the service file
